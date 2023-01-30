@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 @NoArgsConstructor(access=AccessLevel.NONE)
@@ -38,11 +40,24 @@ public class TxtLineProcessor {
 	public static String getLine(Field field, Object object) {
 		TxtLine txtLine = getTxtLine(field);
 		Object fieldValue = ReflectUtil.getValue(field, object);
+		Class<?> type = fieldValue.getClass();
 		if(txtLine == null) {
-			txtLine = getTxtLine(fieldValue.getClass());
+			if(Iterable.class.isAssignableFrom(type)) {
+				Class<?> genericClass = getGenericClass(type);
+				txtLine = getTxtLine(genericClass);
+			}else {
+				txtLine = getTxtLine(type);
+			}
 			if(txtLine == null) {
 				return "";
 			}
+		}
+		if(Iterable.class.isAssignableFrom(type)) {
+			StringBuilder sb = new StringBuilder();
+			for(Object o: (Iterable<?>) fieldValue) {
+				sb.append(generateLine(txtLine, o));
+			}
+			return sb.toString();
 		}
 		return generateLine(txtLine, fieldValue);
 	}
@@ -107,6 +122,15 @@ public class TxtLineProcessor {
 		if(txtLine.breakLine()) {
 			sb.append("\n");
 		}
+	}
+
+	private static Class<?> getGenericClass(Class<?> type) {
+		Type superclass = type.getGenericSuperclass();
+		if(superclass instanceof ParameterizedType) {
+			ParameterizedType paramType = (ParameterizedType) superclass;
+			return (Class<?>) paramType.getActualTypeArguments()[0];
+		}
+		return type;
 	}
 
 }
