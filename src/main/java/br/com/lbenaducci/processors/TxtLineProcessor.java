@@ -19,7 +19,11 @@ public class TxtLineProcessor {
 		if(field.isAnnotationPresent(TxtLine.class)) {
 			return field.getAnnotation(TxtLine.class);
 		}
-		return null;
+		Class<?> type = field.getType();
+		if(Iterable.class.isAssignableFrom(type)) {
+			type = getGenericClass(type);
+		}
+		return getTxtLine(type);
 	}
 
 	public static TxtLine getTxtLine(@NonNull Class<?> type) {
@@ -42,15 +46,7 @@ public class TxtLineProcessor {
 		Object fieldValue = ReflectUtil.getValue(field, object);
 		Class<?> type = fieldValue.getClass();
 		if(txtLine == null) {
-			if(Iterable.class.isAssignableFrom(type)) {
-				Class<?> genericClass = getGenericClass(type);
-				txtLine = getTxtLine(genericClass);
-			}else {
-				txtLine = getTxtLine(type);
-			}
-			if(txtLine == null) {
-				return "";
-			}
+			return "";
 		}
 		if(Iterable.class.isAssignableFrom(type)) {
 			StringBuilder sb = new StringBuilder();
@@ -71,14 +67,17 @@ public class TxtLineProcessor {
 		addEndLine(txtLine, line);
 		addBreakLine(txtLine, line);
 
+		for(Field field: getLineField(object)) {
+			line.append(getLine(field, object));
+		}
+
 		return line.toString();
 	}
 
 	private static LinkedList<Field> getFieldsSorted(Object object) {
-		Field[] declaredFields = object.getClass().getDeclaredFields();
 		LinkedList<Field> orderFields = new LinkedList<>();
 		LinkedList<Field> otherFields = new LinkedList<>();
-		for(Field field: declaredFields) {
+		for(Field field: object.getClass().getDeclaredFields()) {
 			TxtAttribute txtAttribute = TxtAttributeProcessor.getTxtAttribute(field);
 			if(txtAttribute == null) {
 				continue;
@@ -92,6 +91,17 @@ public class TxtLineProcessor {
 		}
 		orderFields.addAll(otherFields);
 		return orderFields;
+	}
+
+	private static LinkedList<Field> getLineField(Object object) {
+		LinkedList<Field> fields = new LinkedList<>();
+		for(Field field: object.getClass().getDeclaredFields()) {
+			TxtLine txtLine = getTxtLine(field);
+			if(txtLine != null) {
+				fields.add(field);
+			}
+		}
+		return fields;
 	}
 
 	private static void addStartLine(TxtLine txtLine, StringBuilder sb) {

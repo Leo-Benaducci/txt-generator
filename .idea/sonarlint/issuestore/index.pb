@@ -19,5 +19,9 @@ m
 =src/test/java/br/com/lbenaducci/assistants/LineAssistant.java,e/1/e1d99c658e56ccebb1153f74a2f4f69635ea9ce6
 7
 LICENSE,0/3/0398ccd0f49298b10a3d76a47800d2ebecd49859
-7
-pom.xml,4/4/442292b8a7efeabbe4cc176709b833b1792140ec
+e
+5src/test/java/br/com/lbenaducci/TxtGeneratorTest.java,b/1/b1c043c23127104fc10b807a6513904e5257d756
+h
+8src/main/java/br/com/lbenaducci/annotations/TxtLine.java,c/0/c07ba1d8464014243757001d2f38dee7a3038c36
+m
+=src/main/java/br/com/lbenaducci/annotations/TxtAttribute.java,9/c/9cacc527e2aa1f1b638ded06a9397648fa3403d3
