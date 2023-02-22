@@ -10,6 +10,7 @@ import lombok.NonNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 @NoArgsConstructor(access=AccessLevel.NONE)
@@ -59,7 +60,7 @@ public class TxtLineProcessor {
 	}
 
 	private static String generateLine(@NonNull TxtLine txtLine, Object object) {
-		LinkedList<Field> attributes = getFieldsSorted(object);
+		LinkedList<Field> attributes = getFieldsSorted(txtLine, object.getClass());
 
 		StringBuilder line = new StringBuilder();
 		addStartLine(txtLine, line);
@@ -74,10 +75,15 @@ public class TxtLineProcessor {
 		return line.toString();
 	}
 
-	private static LinkedList<Field> getFieldsSorted(Object object) {
+	private static LinkedList<Field> getFieldsSorted(TxtLine txtLine, Class<?> type) {
 		LinkedList<Field> orderFields = new LinkedList<>();
 		LinkedList<Field> otherFields = new LinkedList<>();
-		for(Field field: object.getClass().getDeclaredFields()) {
+		LinkedList<Field> fields = new LinkedList<>(Arrays.asList(type.getDeclaredFields()));
+		if(txtLine != null && txtLine.useSuper()) {
+			Class<?> superType = type.getSuperclass();
+			fields.addAll(getFieldsSorted(getTxtLine(superType), superType));
+		}
+		for(Field field: fields) {
 			TxtAttribute txtAttribute = TxtAttributeProcessor.getTxtAttribute(field);
 			if(txtAttribute == null) {
 				continue;

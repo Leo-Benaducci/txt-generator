@@ -15,4 +15,6 @@ public @interface TxtLine {
 	String startWith() default "";
 
 	String endWith() default "";
+
+	boolean useSuper() default false;
 }
