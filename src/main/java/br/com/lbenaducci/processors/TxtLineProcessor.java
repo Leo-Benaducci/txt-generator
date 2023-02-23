@@ -11,7 +11,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 @NoArgsConstructor(access=AccessLevel.NONE)
 public class TxtLineProcessor {
@@ -90,11 +92,12 @@ public class TxtLineProcessor {
 			}
 			int order = txtAttribute.order();
 			if(order > -1) {
-				orderFields.add(order, field);
+				orderFields.add(field);
 			} else {
 				otherFields.add(field);
 			}
 		}
+		orderFields.sort(Comparator.comparingInt(a -> Objects.requireNonNull(TxtAttributeProcessor.getTxtAttribute(a)).order()));
 		orderFields.addAll(otherFields);
 		return orderFields;
 	}

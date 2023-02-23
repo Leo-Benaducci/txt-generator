@@ -13,8 +13,6 @@ t
 Dsrc/test/java/br/com/lbenaducci/processors/TxtLineProcessorTest.java,8/2/8249a3a24dd0d9f9f594c57c107c20721dc50566
 m
 =src/test/java/br/com/lbenaducci/assistants/LineAssistant.java,e/1/e1d99c658e56ccebb1153f74a2f4f69635ea9ce6
-7
-LICENSE,0/3/0398ccd0f49298b10a3d76a47800d2ebecd49859
 e
 5src/test/java/br/com/lbenaducci/TxtGeneratorTest.java,b/1/b1c043c23127104fc10b807a6513904e5257d756
 m
